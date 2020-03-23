@@ -1,0 +1,53 @@
+//// -- LEVEL 1
+//// -- Tables and References
+
+// Creating tables
+Table Customers {
+  customer_id varchar [pk]
+  phone int
+  full_name varchar
+  address varchar
+  transaction_id int
+}
+
+
+Table Orders {
+  order_id varchar [pk]
+  customer_id varchar [ref: - Customers.customer_id]
+  order_date time
+  shipped_date time
+ }
+ 
+ 
+Table Items {
+  order_id varchar [pk, ref: - Orders.order_id]
+  item_id varchar [pk]
+  product_id varchar
+  quantity int [ref: - Stocks.quantity]
+  price float
+  discount int
+}
+
+Table Products {
+  product_id varchar [pk, ref: - Items.product_id]
+  category_id varchar
+  brand_id varchar
+  price float
+  product_date time
+}
+
+Table Brands{
+  brand_id varchar [pk, ref: - Products.brand_id]
+  brand_name varchar
+}
+
+Table Stocks {
+  product_id varchar [pk, ref: - Products.product_id]
+  quantity int
+}
+
+Table Categories {
+  category_id varchar [pk, ref: - Products.category_id]
+  category varchar
+}
+ 
