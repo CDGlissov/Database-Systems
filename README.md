@@ -16,6 +16,6 @@ Hvis i har lavet ændringer kan i eventuelt opdatere tekstfilerne eller finde et
 
 ## E-R Model
 Der kan redigeres i ER modellen online på:
-https://www.lucidchart.com/invitations/accept/d3737ff4-e802-4fc8-83a8-11dcac231247
+https://www.lucidchart.com/invitations/accept/da7a9f05-19a7-4a5d-9ea5-948a111fd0a0
 
 Bemærk det kræver en bruger at benytte programmet
