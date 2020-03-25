@@ -12,3 +12,10 @@ Færdiggør 1.1-1.4 inden torsdag, møde kl 10.
 Gå ind på https://dbdiagram.io/d <br>
 Herefter åben onlinebutik.txt, copy teksten i filen og smid teksten ind i venstrekolonne <br>
 Hvis i har lavet ændringer kan i eventuelt opdatere tekstfilerne eller finde et bedre system
+
+
+## E-R Model
+Der kan redigeres i ER modellen online på:
+https://www.lucidchart.com/invitations/accept/d3737ff4-e802-4fc8-83a8-11dcac231247
+
+Bemærk det kræver en bruger at benytte programmet
