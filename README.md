@@ -22,4 +22,4 @@ Bemærk det kræver en bruger at benytte programmet
 
 
 ## Logical Design
-https://www.lucidchart.com/documents/edit/b4d9632c-be23-44bf-9a7a-0caf34677c29/0_0?beaconFlowId=B3A8E716B5BF9342#?folder_id=home&browser=icon
+https://www.lucidchart.com/invitations/accept/e6145210-0bde-4622-a53f-8512a9ca2e67
