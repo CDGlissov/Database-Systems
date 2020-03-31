@@ -96,7 +96,7 @@ INSERT Product VALUES
 ('2018-12-09 12:15:00','sweater','','Painter','514','B'),
 
 
-
+##
 CREATE TABLE Product
 	(product_id		INT NOT NULL AUTO_INCREMENT,
 	 product_date	DATE,
