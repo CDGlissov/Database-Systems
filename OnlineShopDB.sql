@@ -19,6 +19,12 @@ DROP TABLE IF EXISTS Orders;
 
 /* Table creation! Create Tables with Foreign Keys after the referenced tables are created! */
 
+CREATE TABLE City
+	(customer_zipcode INT(4) NOT NULL AUTO_INCREMENT,
+    city_name VARCHAR(50),
+    PRIMARY KEY(customer_zipcode)
+    );
+
 CREATE TABLE Customer
 	(
     customer_id		INT NOT NULL AUTO_INCREMENT,
@@ -29,7 +35,8 @@ CREATE TABLE Customer
     customer_phone VARCHAR(8),
     customer_email VARCHAR(50),
     customer_accept_news BOOLEAN,
-    PRIMARY KEY(customer_id)
+    PRIMARY KEY(customer_id),
+    FOREIGN KEY(customer_zipcode) REFERENCES City(customer_zipcode) ON DELETE SET NULL ON UPDATE CASCADE
     );
 
 CREATE TABLE Orders 
@@ -40,10 +47,19 @@ CREATE TABLE Orders
 	order_shipped 		DATETIME,
 	order_payment_info 	ENUM("mobilepay","visa","paypal","mastercard", "transaction"),
 	PRIMARY KEY(order_id),
-	FOREIGN KEY(customer_id) REFERENCES Customer(customer_id) ON DELETE SET NULL
+	FOREIGN KEY(customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE
     ); 
     /*when deleted we could also delete customer, but customer might have more
     than one order, so shouldn't be deleted.*/
+
+CREATE TABLE Deals
+	(
+	 deal_id		INT NOT NULL AUTO_INCREMENT,
+	 deal_discount		DECIMAL(3,2), 
+	 deal_starts	DATETIME, 
+	 deal_expires	DATETIME,
+	 PRIMARY KEY(deal_id)
+	);
 
 CREATE TABLE Product
 	(product_id		INT NOT NULL AUTO_INCREMENT,
@@ -55,18 +71,10 @@ CREATE TABLE Product
      product_stock  INT,
 	 product_brand	ENUM("bsosdesign","adidas","nike","calvinklein",
 						"boohoo","zara","obey","veromoda","levis"),
-	 PRIMARY KEY(product_id)
+	 deal_id		INT,
+	 PRIMARY KEY(product_id),
+     FOREIGN KEY(deal_id) REFERENCES Deals(deal_id)
 	);
-
-CREATE TABLE Deals
-	(
-	 product_id		INT REFERENCES Product,
-	 discount		DECIMAL(4,2), 
-	 deal_starts	DATETIME, 
-	 deal_expires	DATETIME,
-	 PRIMARY KEY(product_id)
-	);
-/*FOREIGN KEY(product_id) REFERENCES Product(product_id) ON DELETE SET NULL*/
 
 CREATE TABLE OrderItem
 	(order_id INT REFERENCES Product,
@@ -74,10 +82,7 @@ CREATE TABLE OrderItem
     order_item_quantity INT,
     PRIMARY KEY(product_id, order_id)
     );
-/*
-    FOREIGN KEY(product_id) REFERENCES Product(product_id) ON DELETE SET NULL,
-	FOREIGN KEY(order_id) REFERENCES Orders(order_id) ON DELETE SET NULL
-*/
+
 
 CREATE TABLE Rating
 	(product_id		INT REFERENCES Product,
@@ -87,35 +92,38 @@ CREATE TABLE Rating
      rating_review	CHAR(250),
      PRIMARY KEY(product_id, customer_id)
 	);
-/*
-     FOREIGN KEY(product_id) REFERENCES Product(product_id) ON DELETE SET NULL,
-     FOREIGN KEY(customer_id) REFERENCES Customer(customer_id) ON DELETE SET NULL
-*/
 
-CREATE TABLE City
-	(customer_zipcode INT(4) REFERENCES Customer,
-    city_name VARCHAR(50),
-    PRIMARY KEY(customer_zipcode)
-    );
-/*
-FOREIGN KEY(customer_zipcode) REFERENCES Customer(customer_zipcode) ON DELETE SET NULL
-*/
 
 /* Insertion of table rows one by one! */
+INSERT Deals VALUES
+(1, 0.50, '2018-01-01 7:00:00', '2018-01-05 17:00:00'),
+(2, 0.10, '2019-05-01 7:00:00', '2018-05-10 17:00:00'),
+(3, 0.20, '2020-02-10 7:00:00', '2018-02-20 17:00:00');
 
 INSERT Product VALUES
-(1,'2020-02-03','tops','sports top, just do it',300,20,'nike'),
-(2,'2019-11-06','jacket','comfy winter jacket',1200,30,'zara'),
-(3,'2019-01-16','tshirt','bsos basic tshirt darkblue',89,189,'bsosdesign'),
-(4,'2019-01-16','tshirt','bsos basic tshirt black',89,200,'bsosdesign'),
-(5,'2019-05-06','unspecified','denim underpants',100,2000,'bsosdesign'),
-(6,'2020-01-02','dress','boohoo colourful dress',280,40,'boohoo'),
-(7,'2019-12-09','shirt','casual shirt',600,20,'obey'),
-(8,'2019-07-09','pants','stretchy sports tights',449,50,'nike'),
-(9,'2018-12-09','pants','bsos slim fit jeans',700,150,'bsosdesign'),
-(11,'2018-12-09','sweater','bsos christmas sweater',300,150,'bsosdesign'),
-(12,'2019-10-09','sweater','bsos wow theme recked bro, LIMITED EDITION',600,10,'bsosdesign'),
-(13,'2018-01-01','pants','very good pants',1200,0,'nike');
+(1,'2020-02-03','tops','sports top, just do it',300,20,'nike', NULL),
+(2,'2019-11-06','jacket','comfy winter jacket',1200,30,'zara', NULL),
+(3,'2019-01-16','tshirt','bsos basic tshirt darkblue',89,189,'bsosdesign', 2),
+(4,'2019-01-16','tshirt','bsos basic tshirt black',89,200,'bsosdesign', 2),
+(5,'2019-05-06','unspecified','denim underpants',100,2000,'bsosdesign', NULL),
+(6,'2020-01-02','dress','boohoo colourful dress',280,40,'boohoo', NULL),
+(7,'2019-12-09','shirt','casual shirt',600,20,'obey', NULL),
+(8,'2019-07-09','pants','stretchy sports tights',449,50,'nike', 3),
+(9,'2018-12-09','pants','bsos slim fit jeans',700,150,'bsosdesign', NULL),
+(11,'2018-12-09','sweater','bsos christmas sweater',300,150,'bsosdesign', NULL),
+(12,'2019-10-09','sweater','bsos wow theme recked bro, LIMITED EDITION',600,10,'bsosdesign', NULL),
+(13,'2018-01-01','pants','very good pants',1200,0,'nike', 1);
+
+INSERT City VALUES
+(2850, 'Nærum'),
+(2100, 'København Ø'),
+(2300, 'København S'),
+(4900, 'Nakskov'),
+(9000, 'Aalborg'),
+(4000, 'Roskilde'),
+(2750, 'Ballerup'),
+(2830, "Virum"),
+(9999, 'Orgrimmar');
 
 INSERT Customer VALUES
 (1,'Christian', 'Glisov', 2830, 'Gammel Haslevvej 32',66778899, 'glissovsen@gmail.com', TRUE),
@@ -125,23 +133,6 @@ INSERT Customer VALUES
 (5,'Anne', 'Haxthausen',  9000,  'Aalborg gade 10, 1 th',	'45257510', 'aeha@dtu.dk', 	FALSE),
 (6,'Charlotte', 'Theisen', 9000,  'Aarhusvej 10',	'00112112', 'XXXXXX@student.dtu.dk', TRUE),
 (7,'Asgarath', 'Boomkin',  9999,  'Orgrimmar Road 14', '12345678', 'nerd@worldofwarcraft.com', TRUE);
-
-
-
-INSERT City VALUES
-(2830, 'Nærum'),
-(2100, 'København Ø'),
-(2300, 'København S'),
-(4900, 'Nakskov'),
-(9000, 'Aalborg'),
-(9999, 'Orgrimmar');
-
-
-INSERT Deals VALUES
-(2, 0.50, '2018-01-01 7:00:00', '2018-01-05 17:00:00'),
-(6, 0.10, '2019-05-01 7:00:00', '2018-05-10 17:00:00'),
-(9, 0.20, '2020-02-10 7:00:00', '2018-02-20 17:00:00');
-
 
 INSERT Orders VALUES
 (1, 1, '2019-01-01 10:34:00',  TRUE, '2019-01-01 09:30:01', 'mobilepay'),
