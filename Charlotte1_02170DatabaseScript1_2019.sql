@@ -110,9 +110,9 @@ INSERT Product VALUES
 (7,'2019-12-09','shirt','casual shirt',600,20,'obey', NULL),
 (8,'2019-07-09','pants','stretchy sports tights',449,50,'nike', 3),
 (9,'2018-12-09','pants','bsos slim fit jeans',700,150,'bsosdesign', NULL),
-(11,'2018-12-09','sweater','bsos christmas sweater',300,150,'bsosdesign', NULL),
-(12,'2019-10-09','sweater','bsos wow theme recked bro, LIMITED EDITION',600,10,'bsosdesign', NULL),
-(13,'2018-01-01','pants','very good pants',1200,0,'nike', 1);
+(10,'2018-12-09','sweater','bsos christmas sweater',300,150,'bsosdesign', NULL),
+(11,'2019-10-09','sweater','bsos wow theme recked bro, LIMITED EDITION',600,10,'bsosdesign', NULL),
+(12,'2018-01-01','pants','very good pants',1200,0,'nike', 1);
 
 INSERT City VALUES
 (2850, 'Nærum'),
@@ -126,7 +126,7 @@ INSERT City VALUES
 (9999, 'Orgrimmar');
 
 INSERT Customer VALUES
-(1,'Christian', 'Glisov', 2830, 'Gammel Haslevvej 32',66778899, 'glissovsen@gmail.com', TRUE),
+(1,'Christian', 'Glissov', 2830, 'Gammel Haslevvej 32',66778899, 'glissovsen@gmail.com', TRUE),
 (2,'Mikkel', 'Grønning', 2100, 'Østerbro Alle 109',	'11223344', 'spam607@mail.com', FALSE),
 (3,'Melina', 'Barhagh', 2300, 'Amager Road, 1 th', '11223344', 'Barhagh@live.com', TRUE),
 (4,'Kamilla',	'Bonde', 4900, 'Nakeskov Bouldevard 69 3 th', '44556677', 'skafte@hotmail.com', TRUE),
@@ -178,3 +178,27 @@ INSERT Rating VALUES
 (9, 6, "3", "3", "average"),
 (6, 6, "4", "4", "jeg kan lide det");
 
+/* PART 6 */
+DROP VIEW IF EXISTS StockHealth;
+DROP VIEW IF EXISTS ProductPrice;
+DROP VIEW IF EXISTS CustomerOrders;
+
+/*View the total price of a discounted product*/
+CREATE VIEW ProductPrice AS SELECT product_price, deal_discount, 
+			product_price*IFNULL(1-deal_discount,1) AS total_price, 
+			product_price-product_price*IFNULL(1-deal_discount,1) AS savings 
+            FROM product NATURAL LEFT OUTER JOIN deals;
+
+/*View the order of each customer and some contact information*/
+CREATE VIEW CustomerOrders AS SELECT customer_id, 
+			CONCAT(customer_first_name,' ',customer_last_name) AS full_name, 
+            customer_phone, order_id 
+            FROM Orders NATURAL LEFT OUTER JOIN Customer;
+
+/*View the stock of a product and gives an indicator if the stock is low*/
+CREATE VIEW StockHealth AS SELECT product_id, product_stock, (CASE 
+						WHEN product_stock <= 15 THEN 'Warning: Low' 
+                        WHEN 15 < product_stock AND product_stock <= 100 THEN 'Medium' 
+                        WHEN 100 < product_stock THEN 'High' 
+                        END 
+            ) AS stock_level FROM product;
