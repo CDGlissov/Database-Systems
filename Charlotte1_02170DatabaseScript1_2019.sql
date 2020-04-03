@@ -118,7 +118,7 @@ INSERT City VALUES
 (2850, 'Nærum'),
 (2100, 'København Ø'),
 (2300, 'København S'),
-(4900, 'Nakskov'),
+(2200, 'København N'),
 (9000, 'Aalborg'),
 (4000, 'Roskilde'),
 (2750, 'Ballerup'),
@@ -129,7 +129,7 @@ INSERT Customer VALUES
 (1,'Christian', 'Glissov', 2830, 'Gammel Haslevvej 32',66778899, 'glissovsen@gmail.com', TRUE),
 (2,'Mikkel', 'Grønning', 2100, 'Østerbro Alle 109',	'11223344', 'spam607@mail.com', FALSE),
 (3,'Melina', 'Barhagh', 2300, 'Amager Road, 1 th', '11223344', 'Barhagh@live.com', TRUE),
-(4,'Kamilla',	'Bonde', 4900, 'Nakeskov Bouldevard 69 3 th', '44556677', 'skafte@hotmail.com', TRUE),
+(4,'Kamilla',	'Bonde', 2200, 'Nørrebro Street 69 3 th', '44556677', 'skafte@hotmail.com', TRUE),
 (5,'Anne', 'Haxthausen',  9000,  'Aalborg gade 10, 1 th',	'45257510', 'aeha@dtu.dk', 	FALSE),
 (6,'Charlotte', 'Theisen', 9000,  'Aarhusvej 10',	'00112112', 'XXXXXX@student.dtu.dk', TRUE),
 (7,'Asgarath', 'Boomkin',  9999,  'Orgrimmar Road 14', '12345678', 'nerd@worldofwarcraft.com', TRUE);

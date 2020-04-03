@@ -1,4 +1,5 @@
-SET SQL_SAFE_UPDATES = 1;
+SET SQL_SAFE_UPDATES = 0;
+SET GLOBAL event_scheduler = 1;
 
 /* Check if all items are in stock for a specific order_id */
 DROP FUNCTION IF EXISTS in_stock;
@@ -32,25 +33,23 @@ DELIMITER //
 CREATE TRIGGER approve_order
 AFTER INSERT ON OrderItem FOR EACH ROW
 BEGIN
-	IF in_stock(NEW.order_id)
-    THEN UPDATE Orders
-		SET Orders.order_approval = 1 WHERE NEW.order_id = Orders.order_id;
-    ELSE UPDATE Orders
-		SET Orders.order_approval = 0 WHERE NEW.order_id = Orders.order_id;
-    END  IF;
+	UPDATE Orders
+		SET Orders.order_approval = in_stock(NEW.order_id) WHERE NEW.order_id = Orders.order_id;
 END; // 
 DELIMITER ;
 
-
+/*
 DROP TRIGGER IF EXISTS update_stock;
 DELIMITER $$
 CREATE TRIGGER update_stock
 AFTER UPDATE ON Orders FOR EACH ROW
 IF NEW.order_approval
 THEN UPDATE Product
-	SET product_stock = product_stock - (SELECT order_item_quantity FROM OrderItem WHERE Product.product_id = OrderItem.product_id and NEW.order_id = OrderItem.order_id);
-END IF; $$
+	SET product_stock =  product_stock - (SELECT order_item_quantity FROM OrderItem WHERE Product.product_id = OrderItem.product_id and NEW.order_id = OrderItem.order_id); 
+    END IF ;$$
 DELIMITER ;
+*/
+
 
 INSERT Orders VALUES
 (13, 1, '2020-01-01 08:13:00',  FALSE, null, 'mobilepay');
@@ -68,18 +67,31 @@ FROM Orders;
 SELECT *
 FROM Product;
 
+SELECT * FROM OrderItem;
+
 INSERT Orders VALUES
 (14, 1, '2020-01-01 08:15:00',  FALSE, null, 'mobilepay');
 
 INSERT OrderItem VALUES
-(14,11,1);
+(14,11,1),
+(14,1,2);
+
+SELECT *
+FROM Orders;
+
+SELECT * FROM OrderItem;
 
 SELECT *
 FROM Product;
 
-SELECT in_stock(7);
+SELECT in_stock(14);
 
 
-
+/* Event */
+CREATE EVENT Shipped
+ON SCHEDULE EVERY 1 MINUTE -- 15 DAY_HOUR
+DO UPDATE Orders 
+	SET order_shipped = CASE WHEN order_approval = 1 and order_shipped IS NULL THEN CURRENT_TIMESTAMP
+							 ELSE order_shipped END;
 
 
