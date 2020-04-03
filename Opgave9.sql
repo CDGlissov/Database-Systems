@@ -1,3 +1,4 @@
+USE BSOS;
 SET SQL_SAFE_UPDATES = 0;
 SET GLOBAL event_scheduler = 1;
 
@@ -17,17 +18,6 @@ END; //
 DELIMITER ;
 
 /* Check if all items are in stock before approving order */
-/*DROP TRIGGER IF EXISTS approve_order;
-DELIMITER //
-CREATE TRIGGER approve_order
-BEFORE INSERT ON Orders FOR EACH ROW
-BEGIN
-	IF in_stock(NEW.order_id) THEN SET NEW.order_approval = 1;
-    ELSE SET NEW.order_approval = 0;
-    END  IF;
-END; //
-DELIMITER ;
-*/
 DROP TRIGGER IF EXISTS approve_order;
 DELIMITER //
 CREATE TRIGGER approve_order
@@ -38,17 +28,45 @@ BEGIN
 END; // 
 DELIMITER ;
 
-/*
+
+/* Transaction that updates the stock in Product according to the quantity in OrderItems */
+DELIMITER //
+DROP PROCEDURE IF EXISTS Stock_update;
+CREATE PROCEDURE Stock_update(
+IN vproduct INT, vquantity INT, approval BOOLEAN, OUT vStatus VARCHAR(45))
+BEGIN
+DECLARE Oldstock, Newstock INT DEFAULT 0; START TRANSACTION;
+SET Oldstock = (SELECT product_stock FROM Product WHERE product_id = vproduct); SET Newstock = Oldstock - vquantity;
+UPDATE Product SET product_stock = Newstock WHERE product_id = vproduct;
+IF (approval)
+THEN SET vStatus = 'Transaction Transfer committed!'; COMMIT;
+ELSE SET vStatus = 'Transaction Transfer rollback'; ROLLBACK; END IF;
+END; // DELIMITER ;
+
+
+
 DROP TRIGGER IF EXISTS update_stock;
 DELIMITER $$
 CREATE TRIGGER update_stock
 AFTER UPDATE ON Orders FOR EACH ROW
-IF NEW.order_approval
-THEN UPDATE Product
-	SET product_stock =  product_stock - (SELECT order_item_quantity FROM OrderItem WHERE Product.product_id = OrderItem.product_id and NEW.order_id = OrderItem.order_id); 
-    END IF ;$$
+BEGIN
+	DECLARE prodId INT;
+    DECLARE quantity INT;
+    DECLARE approval BOOLEAN;
+	SELECT product_id, order_item_quantity, order_approval INTO ProdId, quantity, approval FROM OrderItem LEFT JOIN Orders using(order_id);
+
+	CALL Stock_update(prodId, quantity, approval, @Status);
+END; $$
 DELIMITER ;
-*/
+
+
+/* Event */
+CREATE EVENT Shipped
+ON SCHEDULE EVERY 1 MINUTE -- 15 DAY_HOUR
+DO UPDATE Orders 
+	SET order_shipped = CASE WHEN order_approval = 1 and order_shipped IS NULL THEN CURRENT_TIMESTAMP
+							 ELSE order_shipped END;
+
 
 
 INSERT Orders VALUES
@@ -85,13 +103,4 @@ SELECT *
 FROM Product;
 
 SELECT in_stock(14);
-
-
-/* Event */
-CREATE EVENT Shipped
-ON SCHEDULE EVERY 1 MINUTE -- 15 DAY_HOUR
-DO UPDATE Orders 
-	SET order_shipped = CASE WHEN order_approval = 1 and order_shipped IS NULL THEN CURRENT_TIMESTAMP
-							 ELSE order_shipped END;
-
 
