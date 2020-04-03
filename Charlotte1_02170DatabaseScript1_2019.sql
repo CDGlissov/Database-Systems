@@ -77,8 +77,8 @@ CREATE TABLE Product
 	);
 
 CREATE TABLE OrderItem
-	(order_id INT REFERENCES Product,
-    product_id INT REFERENCES Orders,
+	(order_id INT REFERENCES Orders,
+    product_id INT REFERENCES Product,
     order_item_quantity INT,
     PRIMARY KEY(product_id, order_id)
     );
@@ -153,19 +153,19 @@ INSERT OrderItem VALUES
 (1, 2, 2),
 (1, 6, 1),
 (1, 10, 3),
-(2, 3, 2),
-(2, 2, 4),
+(12, 3, 2),
+(11, 2, 4),
 (2, 4, 1),
 (3, 6, 1),
-(3, 9, 1),
+(10, 9, 1),
 (4, 2, 5),
 (4, 10, 1),
-(4, 9, 1),
+(9, 9, 1),
 (4, 1, 3),
 (5, 6, 1),
 (6, 3, 1),
-(6, 6, 1),
-(6, 9, 2),
+(7, 6, 1),
+(8, 9, 2),
 (6, 1, 2),
 (7, 3, 1),
 (7, 2, 1);
