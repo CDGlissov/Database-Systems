@@ -29,17 +29,17 @@ SELECT CONCAT(customer_first_name,' ',customer_last_name) as full_name,
         JOIN product ON product.product_id = rating.product_id;
 
 /*Shows the amount customers have spent on products*/
-SELECT customer.customer_id, product.product_id, customer_last_name, 
+SELECT orders.customer_id, customer_zipcode, customer_last_name, 
 						SUM(order_item_quantity*product_price*IFNULL(1-deal_discount,1)) 
                         AS total_spending FROM 
 						customer 
 						INNER JOIN orders ON
-                        orders.order_id = customer.customer_id 
+                        orders.customer_id = customer.customer_id 
 						INNER JOIN orderitem ON
                         orders.order_id = orderitem.order_id
                         INNER JOIN product ON
                         product.product_id = orderitem.product_id
-						NATURAL LEFT OUTER JOIN deals 
+						NATURAL LEFT OUTER JOIN deals
                         GROUP BY customer.customer_id
                         ORDER BY total_spending DESC;
 
@@ -109,7 +109,7 @@ BEGIN
 	SELECT SUM(order_item_quantity*product_price*IFNULL(1-deal_discount,1)) INTO vPrice
 						FROM customer 
 						INNER JOIN orders ON
-						orders.order_id = customer.customer_id 
+						orders.customer_id = customer.customer_id 
 						INNER JOIN orderitem ON
 						orders.order_id = orderitem.order_id
 						INNER JOIN product ON
@@ -120,7 +120,8 @@ BEGIN
 END; //
 DELIMITER ;
 SELECT customer_id, CustomerPrice(customer_id) AS total_spending FROM customer ORDER BY total_spending DESC;
-SELECT CustomerPrice(4) AS Customer_4;
+SELECT CustomerPrice(3) AS Customer_4;
+
 /* The procedure creates a new deal for a week, this can be used as a campaign deal */
 DROP  PROCEDURE  IF  EXISTS  standardDeal;
 DELIMITER  //
